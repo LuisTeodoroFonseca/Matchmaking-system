@@ -33,7 +33,7 @@ int main() {
     std::uniform_int_distribution<> dist(1, 100);
 
     Matchmaking m = Matchmaking();
-    for (int i = 0; i < 100000; i++) {
+    for (int i = 0; i < 50000; i++) {
         Player p = Player(i, "Gabriel", dist(gen), i);
         m.insert(p);
     }

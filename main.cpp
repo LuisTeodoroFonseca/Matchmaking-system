@@ -20,7 +20,12 @@ int main() {
     m1.printWaitingPlayers(); 
     m1.sortByScoreMerge();
     m1.untieByTimestamp();
-    m1.printWaitingPlayers(); 
+    m1.printWaitingPlayers();
+    int n = 5;
+    int* p = &n;
+    Player* group = m1.formGroup(3, 50, p);
+    cout << "n = " << n << endl;
+    m1.printWaitingPlayers();
 
     return 0;
 }

@@ -119,6 +119,36 @@ void Matchmaking::sortByScoreMerge() {
     mergeSort(0, size - 1);
 }
 
+void Matchmaking::untieByTimestamp() {
+    for(int i = 0; i < size - 1; i++) {
+
+        if(players[i].getScore() == players[i + 1].getScore()) {
+
+            int start = i;
+
+            while(i + 1 < size &&
+                  players[i].getScore() == players[i + 1].getScore()) {
+                i++;
+            }
+
+            int end = i;
+            for(int j = start + 1; j <= end; j++) {
+                Player current = players[j];
+                int k = j - 1;
+
+                while(k >= start &&
+                      current.getTimestamp() < players[k].getTimestamp()) {
+
+                    players[k + 1] = players[k];
+                    k--;
+                }
+
+                players[k + 1] = current;
+            }
+        }
+    }
+}
+
 Player* Matchmaking::getWaitingPlayers(int* n) {
     if(size == 0) {
         *n = 0;
@@ -130,6 +160,32 @@ Player* Matchmaking::getWaitingPlayers(int* n) {
         temp[i] = players[i];
     }
     return temp;
+}
+
+Player* Matchmaking::formGroup(int groupSize, int delta, int* n) {
+
+    for (int i = 0; i <= size - groupSize; i++) {
+
+        if (players[i + groupSize - 1].getScore() -
+            players[i].getScore() <= delta) {
+
+            Player* playingGroup = new Player[groupSize];
+
+            for (int j = 0; j < groupSize; j++) {
+                playingGroup[j] = players[i + j];
+            }
+
+            for (int j = 0; j < groupSize; j++) {
+                removePlayer(players[i].getId());
+            }
+
+            *n = groupSize;
+            return playingGroup;
+        }
+    }
+
+    *n = 0;
+    return nullptr;
 }
 
 void Matchmaking::printWaitingPlayers() {
