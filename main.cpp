@@ -21,11 +21,16 @@ int main() {
     m1.sortByScoreMerge();
     m1.untieByTimestamp();
     m1.printWaitingPlayers();
-    int n = 5;
-    int* p = &n;
-    Player* group = m1.formGroup(3, 50, p);
+    int n;
+    Player* waiting = m1.getWaitingPlayers(&n);
+    cout << "n = " << n << endl;
+    Player* group1 = m1.formGroup(3, 50, &n);
     cout << "n = " << n << endl;
     m1.printWaitingPlayers();
-
+    delete[] group1;
+    Player* group2 = m1.formGroup(3, 50, &n);
+    cout << "n = " << n << endl;
+    cout << waiting[0].getId() << waiting[1].getId() << waiting[2].getId() << waiting[3].getId() << endl;
+    m1.printWaitingPlayers();
     return 0;
 }
