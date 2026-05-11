@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 using namespace std;
 
 #include "Player.hpp"
@@ -118,6 +119,36 @@ void Matchmaking::sortByScoreMerge() {
     mergeSort(0, size - 1);
 }
 
+void Matchmaking::untieByTimestamp() {
+    for(int i = 0; i < size - 1; i++) {
+
+        if(players[i].getScore() == players[i + 1].getScore()) {
+
+            int start = i;
+
+            while(i + 1 < size &&
+                  players[i].getScore() == players[i + 1].getScore()) {
+                i++;
+            }
+
+            int end = i;
+            for(int j = start + 1; j <= end; j++) {
+                Player current = players[j];
+                int k = j - 1;
+
+                while(k >= start &&
+                      current.getTimestamp() < players[k].getTimestamp()) {
+
+                    players[k + 1] = players[k];
+                    k--;
+                }
+
+                players[k + 1] = current;
+            }
+        }
+    }
+}
+
 Player* Matchmaking::getWaitingPlayers(int* n) {
     if(size == 0) {
         *n = 0;
@@ -135,5 +166,23 @@ void Matchmaking::printWaitingPlayers() {
     cout << "Waiting players:" << endl;
     for(int i = 0; i < size; i++) {
         cout << "[ " << players[i].getId() << " | " << players[i].getName() << " | " << players[i].getScore() << " | " << players[i].getTimestamp() << " ]" << endl;
+    }
+}
+
+void Matchmaking::shuffle() {
+
+    random_device rd;
+    mt19937 gen(rd());
+
+    for (int i = size - 1; i > 0; i--) {
+
+        uniform_int_distribution<> dist(0, i);
+
+        int j = dist(gen);
+
+        // troca players[i] com players[j]
+        Player temp = players[i];
+        players[i] = players[j];
+        players[j] = temp;
     }
 }
