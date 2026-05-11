@@ -23,6 +23,7 @@ Matchmaking.hpp
 Matchmaking.cpp
 Player.hpp
 Player.cpp
+time.cpp
 README.md
 Relatorio.pdf
 ```
@@ -34,6 +35,7 @@ Relatorio.pdf
 - `Player.cpp`: implementação da classe `Player`;
 - `Matchmaking.hpp`: declaração da classe `Matchmaking`;
 - `Matchmaking.cpp`: implementação da classe `Matchmaking`;
+- `time.cpp`: comparação Merge x Insertion;
 - `README.md`: instruções do projeto;
 - `Relatorio.pdf`: relatório técnico e análise do sistema.
 
