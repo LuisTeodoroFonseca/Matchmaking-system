@@ -23,7 +23,6 @@ public:
 
     void sortByScoreInsertion();
     void sortByScoreMerge();
-    void untieByTimestamp();
 
     Player* formGroup(int groupSize, int delta, int* n);
 
