@@ -15,9 +15,9 @@ Matchmaking::~Matchmaking() {
 }
 
 bool Matchmaking::insert(Player player) {
-    if (size == MAX_PLAYERS) 
+    if (size == MAX_PLAYERS)  //se o maximo de players foi atingido
         return false;
-    players[size] = player;
+    players[size] = player; //insere ao final do array players
     size++;
     return true;
 }
@@ -26,7 +26,7 @@ bool Matchmaking::removePlayer(int id) {
     for(int i = 0; i < size; i++) {
         if(players[i].getId() == id){
             size--;
-            for(int j = i; j < size; j++) {
+            for(int j = i; j < size; j++) { //desloca os players seguintes uma posição para a esquerda
                 players[j] = players[j+1];
             }
             return true;
@@ -35,14 +35,15 @@ bool Matchmaking::removePlayer(int id) {
     return false;
 }
 
-void Matchmaking::sortByScoreInsertion() {
+void Matchmaking::sortByScoreInsertion() { //ordena usando insertion sort
     int i, j;
     Player current;
     for(int i = 1; i < size; i++) {
         current = players[i];
         j = i - 1;
-
+        //move jogadores com score menor (ou mesmo score e menor timestamp) uma posição à frente
         while(j >= 0 && current.getScore() <= players[j].getScore()) {
+            //empate de score: ordena pelo menor timestamp
             if(current.getScore() == players[j].getScore()) {
                 if(current.getTimestamp() > players[j].getTimestamp()) {
                     break;
@@ -54,7 +55,7 @@ void Matchmaking::sortByScoreInsertion() {
         players[j+1] = current;
     }
 }
-
+//combina dois arrays ordenados em um único array
 void Matchmaking::merge(int left, int mid, int right) {
     Player* temp = new Player[right - left + 1];
 
@@ -62,6 +63,7 @@ void Matchmaking::merge(int left, int mid, int right) {
     int j = mid + 1;
     int k = 0;
 
+    //intercala os dois subarrays enquanto ambos tiverem players
     while(i <= mid && j <= right) {
         if(players[i].getScore() == players[j].getScore()) {
             if(players[i].getTimestamp() <= players[j].getTimestamp()) {
@@ -76,77 +78,47 @@ void Matchmaking::merge(int left, int mid, int right) {
             }
         }
         else if(players[i].getScore() < players[j].getScore()) {
-            temp[k] = players[i];
+            temp[k] = players[i]; //direito tem score maior, vai primeiro
             i++;
             k++;
         }
         else if(players[i].getScore() > players[j].getScore()) {
-            temp[k] = players[j];
+            temp[k] = players[j]; //esquerdo tem score maior, vai primeiro
             j++;
             k++;
         }
     }
-
+    //copia os elementos restantes do subarray esquerdo se houver
     while(i <= mid) {
         temp[k] = players[i];
         k++;
         i++;
     }
-
+    //copia os elementos restantes do subarray direito se houver
     while(j <= right) {
         temp[k] = players[j];
         k++;
         j++;
     }
-
+    //copia o array temporário de volta para players no intervalo correto
     for(int l = 0; l < right - left + 1; l++) {
         players[left + l] = temp[l];
     }
 
     delete[] temp;
 }
-
+//divide recursivamente cada array e ordena cada metade
 void Matchmaking::mergeSort(int left, int right) {
-    if(left >= right) 
+    if(left >= right) //caso base
         return;
     int mid = (right + left) / 2;
-    mergeSort(left, mid);
-    mergeSort(mid + 1, right);
-    merge(left, mid, right);
+    mergeSort(left, mid); //ordena metade esquerda
+    mergeSort(mid + 1, right); //ordena metade direita
+    merge(left, mid, right); //combina as duas metades ordenadas
 }
 
 void Matchmaking::sortByScoreMerge() {
     mergeSort(0, size - 1);
-}
-
-void Matchmaking::untieByTimestamp() {
-    for(int i = 0; i < size - 1; i++) {
-
-        if(players[i].getScore() == players[i + 1].getScore()) {
-
-            int start = i;
-
-            while(i + 1 < size &&
-                  players[i].getScore() == players[i + 1].getScore()) {
-                i++;
-            }
-
-            int end = i;
-            for(int j = start + 1; j <= end; j++) {
-                Player current = players[j];
-                int k = j - 1;
-
-                while(k >= start &&
-                      current.getTimestamp() < players[k].getTimestamp()) {
-
-                    players[k + 1] = players[k];
-                    k--;
-                }
-
-                players[k + 1] = current;
-            }
-        }
-    }
 }
 
 Player* Matchmaking::getWaitingPlayers(int* n) {
@@ -161,20 +133,19 @@ Player* Matchmaking::getWaitingPlayers(int* n) {
     }
     return temp;
 }
-
+//o array players deve estar ordenado antes de chamar a função
 Player* Matchmaking::formGroup(int groupSize, int delta, int* n) {
-
+    // Percorre janelas de tamanho groupSize procurando uma com diferença <= delta
     for (int i = 0; i <= size - groupSize; i++) {
-
+        // Verifica se a diferença entre o maior e o menor score da janela é aceitável
         if (players[i + groupSize - 1].getScore() -
             players[i].getScore() <= delta) {
-
+            // Aloca e copia os jogadores do grupo encontrado
             Player* playingGroup = new Player[groupSize];
-
             for (int j = 0; j < groupSize; j++) {
                 playingGroup[j] = players[i + j];
             }
-
+            // Remove os jogadores do grupo da fila de matchmaking
             for (int j = 0; j < groupSize; j++) {
                 removePlayer(players[i].getId());
             }

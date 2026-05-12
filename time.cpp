@@ -7,24 +7,6 @@ using namespace std::chrono;
 #include "Matchmaking.hpp"
 #include "Player.hpp"
 
-void shuffle(int arr[], int size) {
-
-    random_device rd;
-    mt19937 gen(rd());
-
-    for (int i = size - 1; i > 0; i--) {
-
-        uniform_int_distribution<> dist(0, i);
-
-        int j = dist(gen);
-
-        // troca
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-}
-
 int main() {
     std::random_device rd;
 

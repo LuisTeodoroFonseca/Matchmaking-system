@@ -19,7 +19,6 @@ int main() {
     m1.insert(Player4);
     m1.printWaitingPlayers(); 
     m1.sortByScoreMerge();
-    m1.untieByTimestamp();
     m1.printWaitingPlayers();
     int n;
     Player* waiting = m1.getWaitingPlayers(&n);
